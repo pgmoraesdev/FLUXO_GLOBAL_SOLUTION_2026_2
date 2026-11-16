@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 // CORES
 const black = Color(0xFF000000);
@@ -332,3 +333,180 @@ const List<MetroLine> metroLines = [
 // Busca uma linha pelo número. Usado pelos filtros e pelos avisos.
 MetroLine lineByNumber(int number) =>
     metroLines.firstWhere((line) => line.number == number);
+
+// WIDGETS USADOS EM OUTRAS TELAS
+
+// Logo do app
+Widget fluxoLogo({double height = 28}) => Image.asset(
+      'assets/images/simbolo_trama.png',
+      height: height
+    );
+
+// Barra visual de porcentagem de ocupação
+class OccupancyBar extends StatelessWidget {
+  final int percent;
+  final double height;
+
+  const OccupancyBar({
+    super.key,
+    required this.percent,
+    this.height = 14,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: height,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border.all(color: black, width: 1.5),
+        borderRadius: BorderRadius.circular(3),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: FractionallySizedBox(
+          widthFactor: percent.clamp(0, 100) / 100,
+          heightFactor: 1,
+          child: ColoredBox(color: occupancyColor(percent)),
+        ),
+      ),
+    );
+  }
+}
+
+// Mostra a porcentagem e o texto "da capacidade".
+class OccupancyLabel extends StatelessWidget {
+  final int percent;
+  final double size;
+
+  const OccupancyLabel({
+    super.key,
+    required this.percent,
+    this.size = 18,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Text(
+          '$percent%',
+          style: TextStyle(
+            color: black,
+            fontWeight: FontWeight.bold,
+            fontSize: size,
+          ),
+        ),
+        const Text(
+          'da capacidade',
+          style: TextStyle(color: muted, fontSize: 10),
+        ),
+      ],
+    );
+  }
+}
+
+// BARRA DE NAVEGAÇÃO NAVBAR
+Widget fluxoNavBar(int index, ValueChanged<int> onTap) {
+  const icons = [
+    LucideIcons.house,
+    LucideIcons.trainFront,
+    LucideIcons.zap,
+    LucideIcons.calendar,
+    LucideIcons.megaphone,
+  ];
+
+  const labels = ['Home', 'Linhas', 'Ações', 'Eventos', 'Comunicados'];
+
+  return SafeArea(
+    top: false,
+    child: Container(
+      margin: const EdgeInsets.fromLTRB(12, 0, 12, 10),
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border.all(color: black, width: 1.5),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          for (int i = 0; i < labels.length; i++)
+            Expanded(
+              child: InkWell(
+                onTap: () => onTap(i),
+                borderRadius: BorderRadius.circular(radius),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 42,
+                      height: 38,
+                      decoration: BoxDecoration(
+                        color: i == index ? teal : const Color(0xFFE9EDED),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Icon(
+                        icons[i],
+                        size: 20,
+                        color: i == index ? Colors.white : black,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        labels[i],
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: i == index ? tealDark : black,
+                          fontWeight:
+                              i == index ? FontWeight.bold : FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+        ],
+      ),
+    ),
+  );
+}
+
+// Abre a tela correspondente à aba selecionada.
+// As telas Home e Ações PAULO ADICIONA DEPOIS
+void goToTab(BuildContext context, int index) {
+  // TODO: ligar as abas quando as telas estiverem prontas
+  debugPrint('Aba $index ainda não implementada');
+}
+
+// Volta para a tela anterior.
+void goBack(BuildContext context) {
+  if (Navigator.canPop(context)) {
+    Navigator.pop(context);
+  } else {
+    goToTab(context, 0);
+  }
+}
+
+// AppBar padrão usada nas telas internas.
+PreferredSizeWidget fluxoBackAppBar(BuildContext context) => AppBar(
+      backgroundColor: Colors.white,
+      elevation: 0,
+      leading: IconButton(
+        tooltip: 'Voltar',
+        icon: const Icon(LucideIcons.arrowLeft, color: black),
+        onPressed: () => goBack(context),
+      ),
+      actions: [
+        Padding(
+          padding: const EdgeInsets.only(right: 16),
+          child: fluxoLogo(),
+        ),
+      ],
+    );
+
+// TODO: montar a tela de linhas (LinesScreen) com busca e lista

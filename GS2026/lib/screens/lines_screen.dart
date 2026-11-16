@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
+import 'line_detail_screen.dart';
 
 // CORES
 const black = Color(0xFF000000);
@@ -509,4 +510,349 @@ PreferredSizeWidget fluxoBackAppBar(BuildContext context) => AppBar(
       ],
     );
 
-// TODO: montar a tela de linhas (LinesScreen) com busca e lista
+// PADRÕES DE CAMPO DE BUSCA
+
+OutlineInputBorder _border(Color color, double width) => OutlineInputBorder(
+      borderRadius: BorderRadius.circular(radius),
+      borderSide: BorderSide(color: color, width: width),
+    );
+
+// PADRONIZANDO A DECORAÇÃO DO SEARCH
+InputDecoration searchDecoration(String hint) => InputDecoration(
+      hintText: hint,
+      hintStyle: const TextStyle(color: Color(0xFF7C8499)),
+      prefixIcon: const Icon(LucideIcons.search, color: greyBorder, size: 20),
+      isDense: true,
+      border: _border(greyBorder, 1.5),
+      enabledBorder: _border(greyBorder, 1.5),
+      focusedBorder: _border(greyBorder, 2),
+    );
+
+// TÍTULO PADRÃO DE SEÇÃO
+class ScreenTitle extends StatelessWidget {
+  final String title;
+  final String subtitle;
+
+  const ScreenTitle({
+    super.key,
+    required this.title,
+    required this.subtitle,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title.toUpperCase(),
+          style: const TextStyle(
+            color: black,
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 1.2,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          subtitle,
+          style: const TextStyle(color: muted, fontSize: 12, height: 1.35),
+        ),
+      ],
+    );
+  }
+}
+
+// CHIP DE FILTRO
+// É o botão usado para selecionar "Todas" ou uma linha específica.
+class FluxoChip extends StatelessWidget {
+  final String label;
+  final bool active;
+  final Color? dotColor;
+  final VoidCallback onTap;
+
+  const FluxoChip({
+    super.key,
+    required this.label,
+    required this.active,
+    required this.onTap,
+    this.dotColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 8),
+      child: Material(
+        color: active ? tealDark : Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(radius),
+          side: BorderSide(
+            color: active ? tealDark : greyBorder,
+            width: 1.5,
+          ),
+        ),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(radius),
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (dotColor != null) ...[
+                  Container(
+                    width: 10,
+                    height: 10,
+                    decoration: BoxDecoration(
+                      color: dotColor,
+                      borderRadius: BorderRadius.circular(2),
+                      border: Border.all(
+                        color: active ? Colors.white : Colors.black26,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                ],
+                Text(
+                  label,
+                  maxLines: 1,
+                  softWrap: false,
+                  style: TextStyle(
+                    color: active ? Colors.white : black,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// Organiza os filtros de linha em uma faixa horizontal.
+class LineFilterBar extends StatelessWidget {
+  final List<int> lines;
+  final int? selected;
+  final ValueChanged<int?> onChanged;
+
+  const LineFilterBar({
+    super.key,
+    required this.lines,
+    required this.selected,
+    required this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: [
+          FluxoChip(
+            label: 'Todas',
+            active: selected == null,
+            onTap: () => onChanged(null),
+          ),
+          for (final number in lines)
+            FluxoChip(
+              label: 'Linha $number',
+              dotColor: lineByNumber(number).color,
+              active: selected == number,
+              onTap: () => onChanged(selected == number ? null : number),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+// IDENTIFICAÇÃO DA LINHA
+// Ao tocar no badge, o usuário abre os detalhes daquela linha.
+class LineBadge extends StatelessWidget {
+  final MetroLine line;
+
+  const LineBadge({super.key, required this.line});
+
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      message: 'Ver lotação da ${line.name}',
+      child: Material(
+        color: line.color,
+        borderRadius: BorderRadius.circular(radius),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(radius),
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => LineDetailScreen(line: line),
+            ),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  '${line.number} - ${line.colorName.toLowerCase()}',
+                  maxLines: 1,
+                  softWrap: false,
+                  style: TextStyle(
+                    color: line.onColor,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(width: 2),
+                Icon(
+                  LucideIcons.chevronRight,
+                  size: 14,
+                  color: line.onColor,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// Mostra quais linhas estão relacionadas a um evento ou comunicado.
+class AffectedLines extends StatelessWidget {
+  final List<int> lines;
+
+  const AffectedLines({super.key, required this.lines});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Linhas afetadas:',
+          style: TextStyle(color: muted, fontSize: 12),
+        ),
+        const SizedBox(height: 6),
+        Wrap(
+          spacing: 6,
+          runSpacing: 6,
+          children: [
+            for (final number in lines)
+              LineBadge(line: lineByNumber(number)),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+// CARD COMPARTILHADO DE EVENTOS E COMUNICADOS
+// Os campos opcionais permitem usar o mesmo card em situações diferentes.
+class InfoCard extends StatelessWidget {
+  final String title;
+  final String when;
+  final List<int> lines;
+  final String warning;
+  final String? description;
+  final Widget? trailing;
+  final Widget? footer;
+  final bool highlight;
+
+  const InfoCard({
+    super.key,
+    required this.title,
+    required this.when,
+    required this.lines,
+    required this.warning,
+    this.description,
+    this.trailing,
+    this.footer,
+    this.highlight = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: highlight ? softTeal : Colors.white,
+        border: Border.all(color: black, width: 1.5),
+        borderRadius: BorderRadius.circular(radius),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Text(
+                  title,
+                  style: const TextStyle(
+                    color: black,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              if (trailing != null) ...[
+                const SizedBox(width: 8),
+                trailing!,
+              ],
+            ],
+          ),
+          if (description != null && description!.isNotEmpty) ...[
+            const SizedBox(height: 6),
+            Text(
+              description!,
+              style: const TextStyle(color: muted, fontSize: 12),
+            ),
+          ],
+          const SizedBox(height: 6),
+          Row(
+            children: [
+              const Icon(LucideIcons.calendar, size: 14, color: muted),
+              const SizedBox(width: 6),
+              Text(
+                when,
+                style: const TextStyle(color: muted, fontSize: 12),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          AffectedLines(lines: lines),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              const Icon(LucideIcons.users, size: 14, color: dangerText),
+              const SizedBox(width: 6),
+              Flexible(
+                child: Text(
+                  warning,
+                  style: const TextStyle(
+                    color: dangerText,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          if (footer != null) ...[
+            const SizedBox(height: 10),
+            const Divider(height: 1, color: Color(0xFFE1E5E5)),
+            const SizedBox(height: 8),
+            footer!,
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+// TODO: montar a tela de linhas (LinesScreen) usando o campo de busca e o InfoCard

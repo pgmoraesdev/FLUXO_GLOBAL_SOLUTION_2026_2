@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
 import 'lines_screen.dart';
 
@@ -119,7 +119,7 @@ class _NoticesScreenState extends State<NoticesScreen> {
                   ? _emptyState()
                   : ListView.separated(
                       itemCount: items.length,
-                      separatorBuilder: (_, __) => const SizedBox(height: 12),
+                      separatorBuilder: (_, _) => const SizedBox(height: 12),
                       itemBuilder: (_, index) => _noticeCard(items[index]),
                     ),
             ),

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
 import 'line_detail_screen.dart';
 import 'events_screen.dart';
@@ -965,7 +965,7 @@ class _LinesScreenState extends State<LinesScreen> {
                   ? const Center(child: Text('Nenhuma linha encontrada'))
                   : ListView.separated(
                       itemCount: items.length,
-                      separatorBuilder: (_, __) =>
+                      separatorBuilder: (_, _) =>
                           const SizedBox(height: 12),
                       itemBuilder: (_, index) => _lineCard(items[index]),
                     ),

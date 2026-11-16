@@ -1,5 +1,5 @@
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
 import 'lines_screen.dart';
 
@@ -139,7 +139,7 @@ class _LineDetailScreenState extends State<LineDetailScreen> {
                         Expanded(
                           child: ListView.separated(
                             itemCount: stations.length,
-                            separatorBuilder: (_, __) =>
+                            separatorBuilder: (_, _) =>
                                 const SizedBox(height: 10),
                             itemBuilder: (_, index) => _StationCard(
                               key: ValueKey(stations[index].name),

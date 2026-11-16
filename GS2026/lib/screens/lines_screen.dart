@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 // CORES
@@ -12,21 +11,23 @@ const softTeal = Color(0xFFF1FAFA);
 const greyBorder = Color(0xFFA7B4B4);
 const double radius = 4;
 
-// REGRAS DE OCUPAÇÃO
+// Define quando a lotação é considerada crítica.
 bool isCritical(int percent) => percent >= 85;
 
+// Escolhe a cor da lotação de acordo com a porcentagem.
 Color occupancyColor(int percent) =>
     isCritical(percent) ? danger : teal;
+
 
 // MODELOS DE DADOS
 class Station {
   final String name;
   final int occupancy;
   final int capacity;
-
   const Station(this.name, this.occupancy, this.capacity);
 
   int get currentPeople => (capacity * occupancy / 100).round();
+
 }
 
 class MetroLine {
@@ -46,7 +47,7 @@ class MetroLine {
 
   String get name => 'Linha $number - $colorName';
 
-  // Calcula a média de ocupação das estações.
+  // Calcula a média de ocupação de todas as estações da linha.
   int get occupancy {
     int total = 0;
 
@@ -57,7 +58,7 @@ class MetroLine {
     return stations.isEmpty ? 0 : (total / stations.length).round();
   }
 
-  // Encontra a estação mais movimentada.
+  // Encontra a estação com a maior porcentagem de ocupação.
   Station get busiest {
     Station result = stations.first;
 
@@ -70,11 +71,14 @@ class MetroLine {
     return result;
   }
 
-  Color get onColor =>
-      color.computeLuminance() > 0.5 ? black : Colors.white;
+  // perfumaria cor da linha
+  Color get onColor => color.computeLuminance() > 0.5 ? black : Colors.white;
 }
 
-// DADOS SIMULADOS DAS LINHAS E ESTAÇÕES
+// DADOS DAS LINHAS E ESTAÇÕES
+// Cada linha possui seu número, nome, tipo, cor e suas estações.
+// Os valores de ocupação e capacidade são dados simulados.
+
 const List<MetroLine> metroLines = [
   MetroLine(1, 'Azul', 'metrô', Color(0xFF0053A0), [
     Station('Tucuruvi', 64, 900),
@@ -325,6 +329,6 @@ const List<MetroLine> metroLines = [
   ]),
 ];
 
-// Busca uma linha pelo número.
+// Busca uma linha pelo número. Usado pelos filtros e pelos avisos.
 MetroLine lineByNumber(int number) =>
     metroLines.firstWhere((line) => line.number == number);

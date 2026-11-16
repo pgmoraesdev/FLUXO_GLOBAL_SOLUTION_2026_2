@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
 import 'line_detail_screen.dart';
+import 'events_screen.dart';
+import 'notices_screen.dart';
 
 // CORES
 const black = Color(0xFF000000);
@@ -480,8 +482,37 @@ Widget fluxoNavBar(int index, ValueChanged<int> onTap) {
 // Abre a tela correspondente à aba selecionada.
 // As telas Home e Ações PAULO ADICIONA DEPOIS
 void goToTab(BuildContext context, int index) {
-  // TODO: ligar as abas quando as telas estiverem prontas
-  debugPrint('Aba $index ainda não implementada');
+  late final Widget page;
+
+  switch (index) {
+     //case 0: 
+     // page = const HomeScreen();, NAO SEI SE TA CERTO ISSO RS
+     // break;
+    //home aqui
+
+    case 1:
+      page = const LinesScreen();
+      break;
+
+    // case 2: actions aq
+
+    case 3:
+      page = const EventsScreen();
+      break;
+
+    case 4:
+      page = const NoticesScreen();
+      break;
+
+    default:
+      return;
+  }
+
+  Navigator.pushAndRemoveUntil(
+    context,
+    MaterialPageRoute(builder: (_) => page),
+    (route) => false,
+  );
 }
 
 // Volta para a tela anterior.
@@ -855,4 +886,214 @@ class InfoCard extends StatelessWidget {
   }
 }
 
-// TODO: montar a tela de linhas (LinesScreen) usando o campo de busca e o InfoCard
+// TELA DE LINHAS
+class LinesScreen extends StatefulWidget {
+  const LinesScreen({super.key});
+
+  @override
+  State<LinesScreen> createState() => _LinesScreenState();
+}
+
+class _LinesScreenState extends State<LinesScreen> {
+  // Guarda o texto digitado na busca.
+  String query = '';
+
+  // Filtra linhas pelo nome, tipo de transporte ou nome de estação.
+  List<MetroLine> get filtered {
+    final search = query.toLowerCase();
+
+    return metroLines.where((line) {
+      return line.name.toLowerCase().contains(search) ||
+          line.type.toLowerCase().contains(search) ||
+          line.stations.any(
+            (station) => station.name.toLowerCase().contains(search),
+          );
+    }).toList();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final items = filtered;
+
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        centerTitle: false,
+        title: Row(
+          children: [
+            fluxoLogo(),
+            const SizedBox(width: 8),
+            const Text(
+              'Fluxo',
+              style: TextStyle(
+                color: black,
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Padding(
+              padding: EdgeInsets.fromLTRB(0, 4, 0, 12),
+              child: Text(
+                'MONITORAMENTO DE LINHAS',
+                style: TextStyle(
+                  color: black,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 1.2,
+                ),
+              ),
+            ),
+            TextField(
+              onChanged: (value) => setState(() => query = value),
+              decoration: searchDecoration('Pesquisar linha ou estação'),
+            ),
+            const SizedBox(height: 14),
+
+            // A lista ocupa o espaço restante da tela e permite rolagem.
+            Expanded(
+              child: items.isEmpty
+                  ? const Center(child: Text('Nenhuma linha encontrada'))
+                  : ListView.separated(
+                      itemCount: items.length,
+                      separatorBuilder: (_, __) =>
+                          const SizedBox(height: 12),
+                      itemBuilder: (_, index) => _lineCard(items[index]),
+                    ),
+            ),
+          ],
+        ),
+      ),
+      bottomNavigationBar: fluxoNavBar(
+        1,
+        (index) {
+          if (index != 1) goToTab(context, index);
+        },
+      ),
+    );
+  }
+
+  // Monta o card de cada linha com sua lotação e ações.
+  Widget _lineCard(MetroLine line) {
+    final percent = line.occupancy;
+
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border.all(color: black, width: 1.5),
+        borderRadius: BorderRadius.circular(radius),
+      ),
+      child: Column(
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    line.name,
+                    style: const TextStyle(
+                      color: black,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                    ),
+                  ),
+                  Text(
+                    line.type,
+                    style: const TextStyle(color: muted, fontSize: 12),
+                  ),
+                ],
+              ),
+              OccupancyLabel(percent: percent),
+            ],
+          ),
+          const SizedBox(height: 10),
+          OccupancyBar(percent: percent),
+          const SizedBox(height: 10),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    width: 10,
+                    height: 10,
+                    decoration: BoxDecoration(
+                      color: occupancyColor(percent),
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Container(
+                    width: 30,
+                    height: 30,
+                    decoration: BoxDecoration(
+                      color: line.color,
+                      borderRadius: BorderRadius.circular(radius),
+                    ),
+                    child: Icon(
+                      LucideIcons.trainFront,
+                      size: 17,
+                      color: line.onColor,
+                    ),
+                  ),
+                ],
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  _link(
+                    'Ver detalhes →',
+                    () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => LineDetailScreen(line: line),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  _link(
+                    'Tomar ações →',
+                    () => ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Ações para ${line.name} em breve'), //paulo, linka aq com a pagina de ações, quando clicar encaminhar para a pagina de ações
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Estilo compartilhado dos links dentro dos cards.
+  Widget _link(String text, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      child: Text(
+        text,
+        style: const TextStyle(
+          color: tealDark,
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+}

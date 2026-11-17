@@ -1,7 +1,7 @@
-name: Publish Flutter Web
+name: Publish Home Preview
 on:
   push:
-    branches: [main]
+    branches: [feat/home-dashboard]
   workflow_dispatch:
 permissions:
   contents: read
@@ -15,21 +15,40 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          path: preview-source
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          path: main-source
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
           cache: true
-      - run: flutter pub get
-      - run: flutter build web --release --base-href /FLUXO_GLOBAL_SOLUTION_2026_2/
+      - name: Build current main site
+        working-directory: main-source
+        run: |
+          flutter pub get
+          flutter build web --release --base-href /FLUXO_GLOBAL_SOLUTION_2026_2/
+      - name: Build home preview
+        working-directory: preview-source
+        run: |
+          flutter pub get
+          flutter build web --release --base-href /FLUXO_GLOBAL_SOLUTION_2026_2/preview/home/
+      - name: Assemble site and preview
+        run: |
+          mkdir -p public/preview/home
+          cp -a main-source/build/web/. public/
+          cp -a preview-source/build/web/. public/preview/home/
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: build/web
+          path: public
   deploy:
     needs: build
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: ${{ steps.deployment.outputs.page_url }}preview/home/
     steps:
       - uses: actions/deploy-pages@v4
         id: deployment

@@ -1,6 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
 import 'line_detail_screen.dart';
+import 'home_screen.dart';
 import 'events_screen.dart';
 import 'notices_screen.dart';
 
@@ -485,10 +486,9 @@ void goToTab(BuildContext context, int index) {
   late final Widget page;
 
   switch (index) {
-     //case 0: 
-     // page = const HomeScreen();, NAO SEI SE TA CERTO ISSO RS
-     // break;
-    //home aqui
+    case 0:
+      page = const HomeScreen();
+      break;
 
     case 1:
       page = const LinesScreen();

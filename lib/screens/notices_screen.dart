@@ -7,13 +7,17 @@ import 'package:lucide_flutter/lucide_flutter.dart';
 import 'lines_screen.dart';
 
 class NoticesScreen extends StatefulWidget {
-  const NoticesScreen({super.key});
+  final NoticesStore? store;
+  const NoticesScreen({super.key, this.store});
 
   @override
   State<NoticesScreen> createState() => _NoticesScreenState();
 }
 
 class _NoticesScreenState extends State<NoticesScreen> {
+  NoticesStore get store => widget.store ?? NoticesStore.instance;
+  List<NoticeItem> get notices => store.items;
+
   final Set<String> read = {};
   bool onlyUnread = false;
 
@@ -42,83 +46,86 @@ class _NoticesScreenState extends State<NoticesScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final items = visible;
-    final unread = unreadCount;
+  Widget build(BuildContext context) => ListenableBuilder(
+    listenable: store,
+    builder: (context, _) {
+      final items = visible;
+      final unread = unreadCount;
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: fluxoBackAppBar(context),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const ScreenTitle(
-              title: 'Comunicados',
-              subtitle: 'Avisos lançados pela operação sobre as linhas.',
-            ),
-            const SizedBox(height: 14),
-            Row(
-              children: [
-                FluxoChip(
-                  label: 'Todos (${notices.length})',
-                  active: !onlyUnread,
-                  onTap: () => setState(() => onlyUnread = false),
-                ),
-                FluxoChip(
-                  label: 'Não lidos ($unread)',
-                  active: onlyUnread,
-                  onTap: () => setState(() => onlyUnread = true),
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Text(
-                    '${notices.length} comunicados · '
-                    '$unread ${unread == 1 ? 'não lido' : 'não lidos'}',
-                    style: const TextStyle(color: muted, fontSize: 12),
+      return Scaffold(
+        backgroundColor: Colors.white,
+        appBar: fluxoBackAppBar(context),
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const ScreenTitle(
+                title: 'Comunicados',
+                subtitle: 'Avisos lançados pela operação sobre as linhas.',
+              ),
+              const SizedBox(height: 14),
+              Row(
+                children: [
+                  FluxoChip(
+                    label: 'Todos (${notices.length})',
+                    active: !onlyUnread,
+                    onTap: () => setState(() => onlyUnread = false),
                   ),
-                ),
-                if (unread > 0)
-                  InkWell(
-                    onTap: _markAllRead,
-                    child: const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 6),
-                      child: Text(
-                        'Marcar todos como lidos',
-                        style: TextStyle(
-                          color: tealDark,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
+                  FluxoChip(
+                    label: 'Não lidos ($unread)',
+                    active: onlyUnread,
+                    onTap: () => setState(() => onlyUnread = true),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(
+                      '${notices.length} comunicados · '
+                      '$unread ${unread == 1 ? 'não lido' : 'não lidos'}',
+                      style: const TextStyle(color: muted, fontSize: 12),
+                    ),
+                  ),
+                  if (unread > 0)
+                    InkWell(
+                      onTap: _markAllRead,
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 6),
+                        child: Text(
+                          'Marcar todos como lidos',
+                          style: TextStyle(
+                            color: tealDark,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-              ],
-            ),
-            const SizedBox(height: 4),
-            Expanded(
-              child: items.isEmpty
-                  ? _emptyState()
-                  : ListView.separated(
-                      itemCount: items.length,
-                      separatorBuilder: (_, _) => const SizedBox(height: 12),
-                      itemBuilder: (_, index) => _noticeCard(items[index]),
-                    ),
-            ),
-          ],
+                ],
+              ),
+              const SizedBox(height: 4),
+              Expanded(
+                child: items.isEmpty
+                    ? _emptyState()
+                    : ListView.separated(
+                        itemCount: items.length,
+                        separatorBuilder: (_, _) => const SizedBox(height: 12),
+                        itemBuilder: (_, index) => _noticeCard(items[index]),
+                      ),
+              ),
+            ],
+          ),
         ),
-      ),
-      bottomNavigationBar: fluxoNavBar(4, (index) {
-        if (index != 4) goToTab(context, index);
-      }),
-    );
-  }
+        bottomNavigationBar: fluxoNavBar(4, (index) {
+          if (index != 4) goToTab(context, index);
+        }),
+      );
+    },
+  );
 
   Widget _noticeCard(NoticeItem notice) {
     final isRead = read.contains(notice.title);
@@ -128,7 +135,7 @@ class _NoticesScreenState extends State<NoticesScreen> {
       description: notice.description,
       when: notice.when,
       lines: notice.lines,
-      warning: 'possível superlotação',
+      warning: notice.warning,
       highlight: !isRead,
       trailing: isRead
           ? null

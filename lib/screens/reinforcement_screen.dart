@@ -2,6 +2,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../data/reinforcement_data.dart';
 import 'lines_screen.dart';
+import 'notices_screen.dart';
 
 class ReinforcementScreen extends StatefulWidget {
   final ReinforcementRequests requests;
@@ -54,9 +55,14 @@ class _ReinforcementScreenState extends State<ReinforcementScreen> {
     if (!mounted) return;
     if (confirmed == true && !widget.requests.hasRequestFor(line)) {
       widget.requests.submit(line, trainCount);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Solicitação simulada registrada.')),
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (_) => NoticesScreen(store: widget.requests.notices),
+        ),
+        (route) => false,
       );
+      return;
     }
     setState(() => confirming = false);
   }

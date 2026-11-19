@@ -1,3 +1,6 @@
+import '../data/train_data.dart';
+import 'train_detail_screen.dart';
+
 import 'package:material_ui/material_ui.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
 
@@ -145,7 +148,7 @@ class _LineDetailScreenState extends State<LineDetailScreen> {
                             itemBuilder: (_, index) => _StationCard(
                               key: ValueKey(stations[index].name),
                               station: stations[index],
-                              lineType: line.type,
+                              line: line,
                               initiallyExpanded: index == 0,
                             ),
                           ),
@@ -165,13 +168,13 @@ class _LineDetailScreenState extends State<LineDetailScreen> {
 // Cada card pode ser expandido para mostrar mais informações.
 class _StationCard extends StatefulWidget {
   final Station station;
-  final String lineType;
+  final MetroLine line;
   final bool initiallyExpanded;
 
   const _StationCard({
     super.key,
     required this.station,
-    required this.lineType,
+    required this.line,
     this.initiallyExpanded = false,
   });
 
@@ -213,7 +216,7 @@ class _StationCardState extends State<_StationCard> {
                       ),
                     ),
                     Text(
-                      widget.lineType,
+                      widget.line.type,
                       style: const TextStyle(color: muted, fontSize: 11),
                     ),
                   ],
@@ -226,6 +229,29 @@ class _StationCardState extends State<_StationCard> {
           const SizedBox(height: 8),
           OccupancyBar(percent: station.occupancy, height: 12),
           const SizedBox(height: 8),
+
+          Align(
+            alignment: Alignment.centerRight,
+            child: TextButton.icon(
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => TrainDetailScreen(
+                    train: MetroTrain.simulated(widget.line, station),
+                  ),
+                ),
+              ),
+              icon: const Icon(
+                LucideIcons.trainFront,
+                size: 16,
+                color: tealDark,
+              ),
+              label: const Text(
+                'Ver metrô e vagões',
+                style: TextStyle(color: tealDark),
+              ),
+            ),
+          ),
 
           // Informações extras aparecem quando o card é expandido.
           if (expanded)

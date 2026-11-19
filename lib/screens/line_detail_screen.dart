@@ -1,3 +1,5 @@
+import '../data/reinforcement_data.dart';
+import 'reinforcement_screen.dart';
 import '../data/train_data.dart';
 import 'train_detail_screen.dart';
 
@@ -272,9 +274,13 @@ class _StationCardState extends State<_StationCard> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     InkWell(
-                      onTap: () => ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Ações para ${station.name} em breve'),
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => ReinforcementScreen(
+                            requests: ReinforcementRequests.instance,
+                            initialLine: widget.line,
+                          ),
                         ),
                       ),
                       child: const Text(

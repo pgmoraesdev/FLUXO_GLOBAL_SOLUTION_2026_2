@@ -183,10 +183,7 @@ class _ReinforcementScreenState extends State<ReinforcementScreen> {
             const SizedBox(height: 8),
             TextButton(
               onPressed: confirming ? null : () => goBack(context),
-              child: const Text(
-                'Voltar às ações',
-                style: TextStyle(color: tealDark),
-              ),
+              child: const Text('Voltar', style: TextStyle(color: tealDark)),
             ),
           ],
         );

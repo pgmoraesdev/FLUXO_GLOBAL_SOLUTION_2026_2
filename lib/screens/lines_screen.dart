@@ -1,3 +1,5 @@
+import '../data/reinforcement_data.dart';
+import 'reinforcement_screen.dart';
 import 'actions_screen.dart';
 import 'home_screen.dart';
 import '../data/metro_data.dart';
@@ -721,9 +723,13 @@ class _LinesScreenState extends State<LinesScreen> {
                   const SizedBox(height: 4),
                   _link(
                     'Tomar ações →',
-                    () => ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Ações para ${line.name} em breve'), //paulo, linka aq com a pagina de ações, quando clicar encaminhar para a pagina de ações
+                    () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => ReinforcementScreen(
+                          requests: ReinforcementRequests.instance,
+                          initialLine: line,
+                        ),
                       ),
                     ),
                   ),

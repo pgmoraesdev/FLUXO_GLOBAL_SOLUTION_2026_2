@@ -1,16 +1,7 @@
 import 'package:material_ui/material_ui.dart';
-import 'package:lucide_flutter/lucide_flutter.dart';
 
 import '../data/train_data.dart';
 import 'lines_screen.dart';
-
-Color _carColor(int occupancy) => occupancy < 60
-    ? tealDark
-    : occupancy < 75
-    ? const Color(0xFF2866C7)
-    : occupancy < 85
-    ? const Color(0xFF986609)
-    : dangerText;
 
 String _carLevel(int occupancy) => occupancy < 60
     ? 'Baixa'
@@ -37,52 +28,38 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
     final best = train.recommended;
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        leading: IconButton(
-          tooltip: 'Voltar',
-          onPressed: () => goBack(context),
-          icon: const Icon(LucideIcons.arrowLeft, color: black),
-        ),
-        title: Text(
-          'Metrô ${train.code}',
-          style: const TextStyle(
-            color: black,
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
+      appBar: fluxoBackAppBar(context),
       body: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 640),
           child: ListView(
-            padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
             children: [
-              Text(
-                'Sentido ${train.destination}',
-                style: const TextStyle(color: muted, fontSize: 13),
+              ScreenTitle(
+                title: 'Metrô ${train.code}',
+                subtitle: 'Sentido ${train.destination}',
               ),
               const SizedBox(height: 6),
               Text(
                 'Na estação ${train.station.name}',
-                style: const TextStyle(color: muted, fontSize: 13),
+                style: const TextStyle(color: muted, fontSize: 12),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 14),
               Wrap(
                 spacing: 12,
                 runSpacing: 8,
                 children: [
-                  _tag(train.line.name, train.line.color, train.line.onColor),
+                  LineBadge(line: train.line),
                   _tag('● Em circulação', softTeal, tealDark),
-                  _tag('Dados simulados', const Color(0xFFF0F2F4), muted),
+                  _tag('Dados simulados', Colors.white, muted),
                 ],
               ),
               const SizedBox(height: 18),
               Container(
-                padding: const EdgeInsets.all(18),
+                padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  color: tealDark,
+                  color: Colors.white,
+                  border: Border.all(color: black, width: 1.5),
                   borderRadius: BorderRadius.circular(radius),
                 ),
                 child: Column(
@@ -90,7 +67,7 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
                   children: [
                     const Text(
                       'OCUPAÇÃO ESTIMADA',
-                      style: TextStyle(color: Colors.white, fontSize: 10),
+                      style: TextStyle(color: muted, fontSize: 12),
                     ),
                     const SizedBox(height: 10),
                     Wrap(
@@ -101,8 +78,8 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
                         Text(
                           '${train.occupancy}%',
                           style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 42,
+                            color: black,
+                            fontSize: 24,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -112,7 +89,7 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
                             Text(
                               '${train.people} pessoas a bordo',
                               style: const TextStyle(
-                                color: Colors.white,
+                                color: black,
                                 fontSize: 14,
                               ),
                             ),
@@ -120,7 +97,7 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
                             Text(
                               'Capacidade: ${train.capacity} pessoas',
                               style: const TextStyle(
-                                color: Colors.white,
+                                color: muted,
                                 fontSize: 12,
                               ),
                             ),
@@ -129,25 +106,16 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
                       ],
                     ),
                     const SizedBox(height: 14),
-                    OccupancyBar(percent: train.occupancy, height: 8),
+                    OccupancyBar(percent: train.occupancy, height: 12),
                   ],
                 ),
               ),
-              const SizedBox(height: 24),
-              const Text(
-                'Escolha o melhor vagão',
-                style: TextStyle(
-                  color: black,
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                ),
+              const SizedBox(height: 14),
+              const ScreenTitle(
+                title: 'Escolha o melhor vagão',
+                subtitle: 'Menor lotação, uma viagem mais tranquila.',
               ),
-              const SizedBox(height: 5),
-              const Text(
-                'Menor lotação, uma viagem mais tranquila.',
-                style: TextStyle(color: muted, fontSize: 12),
-              ),
-              const SizedBox(height: 22),
+              const SizedBox(height: 14),
               const Text(
                 'FRENTE DO METRÔ →',
                 style: TextStyle(color: muted, fontSize: 10),
@@ -184,11 +152,13 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
                 spacing: 10,
                 runSpacing: 8,
                 children: [
-                  for (final percent in [58, 66, 75, 88])
+                  for (final percent in [60, 85])
                     _tag(
-                      _carLevel(percent),
-                      _carColor(percent).withValues(alpha: .1),
-                      _carColor(percent),
+                      isCritical(percent)
+                          ? 'Próxima do limite'
+                          : 'Dentro da capacidade',
+                      Colors.white,
+                      isCritical(percent) ? dangerText : tealDark,
                     ),
                 ],
               ),
@@ -274,7 +244,7 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
   }
 
   Widget _carriage(TrainCarriage car, TrainCarriage best) {
-    final color = _carColor(car.occupancy);
+    final color = occupancyColor(car.occupancy);
     final active = selected == car;
     return Semantics(
       label:
@@ -287,8 +257,8 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(radius),
           side: BorderSide(
-            color: active ? tealDark : greyBorder,
-            width: active ? 2 : 1,
+            color: active ? tealDark : black,
+            width: active ? 2 : 1.5,
           ),
         ),
         clipBehavior: Clip.antiAlias,
@@ -318,7 +288,7 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
                 Text(
                   '${car.occupancy}%',
                   style: TextStyle(
-                    color: color,
+                    color: isCritical(car.occupancy) ? dangerText : tealDark,
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                   ),
@@ -335,6 +305,7 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
     decoration: BoxDecoration(
       color: background,
+      border: Border.all(color: greyBorder, width: 1.5),
       borderRadius: BorderRadius.circular(radius),
     ),
     child: Text(
@@ -349,10 +320,10 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
 
   Widget _panel({required List<Widget> children, Color color = Colors.white}) =>
       Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
           color: color,
-          border: Border.all(color: greyBorder),
+          border: Border.all(color: black, width: 1.5),
           borderRadius: BorderRadius.circular(radius),
         ),
         child: Column(

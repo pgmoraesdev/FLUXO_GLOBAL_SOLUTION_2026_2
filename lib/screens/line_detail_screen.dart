@@ -1,15 +1,17 @@
-
 import 'package:material_ui/material_ui.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
+
 import 'lines_screen.dart';
 
 // Tela com os detalhes de uma linha e suas estações.
 class LineDetailScreen extends StatefulWidget {
   final MetroLine line;
+  final String initialQuery;
 
   const LineDetailScreen({
     super.key,
     required this.line,
+    this.initialQuery = '',
   });
 
   @override
@@ -18,7 +20,16 @@ class LineDetailScreen extends StatefulWidget {
 
 class _LineDetailScreenState extends State<LineDetailScreen> {
   // Guarda o texto digitado na busca.
-  String query = '';
+  late String query = widget.initialQuery;
+  late final TextEditingController searchController = TextEditingController(
+    text: widget.initialQuery,
+  );
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -75,10 +86,7 @@ class _LineDetailScreenState extends State<LineDetailScreen> {
                   ),
                 ),
                 const SizedBox(width: 8),
-                const Text(
-                  'operação normal',
-                  style: TextStyle(color: black),
-                ),
+                const Text('operação normal', style: TextStyle(color: black)),
               ],
             ),
             const SizedBox(height: 4),
@@ -89,21 +97,16 @@ class _LineDetailScreenState extends State<LineDetailScreen> {
             const SizedBox(height: 10),
 
             // Exibe a estação com maior ocupação.
-            const Text(
-              'Estação mais lotada:',
-              style: TextStyle(color: black),
-            ),
+            const Text('Estação mais lotada:', style: TextStyle(color: black)),
             Text(
               '${line.busiest.name} ${line.busiest.occupancy}%',
-              style: const TextStyle(
-                color: black,
-                fontWeight: FontWeight.bold,
-              ),
+              style: const TextStyle(color: black, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 14),
 
             // Campo para pesquisar uma estação pelo nome.
             TextField(
+              controller: searchController,
               onChanged: (value) => setState(() => query = value),
               decoration: searchDecoration('Pesquisar estações'),
             ),
@@ -122,9 +125,7 @@ class _LineDetailScreenState extends State<LineDetailScreen> {
             // Faixa colorida da linha ao lado da lista de estações.
             Expanded(
               child: stations.isEmpty
-                  ? const Center(
-                      child: Text('Nenhuma estação encontrada'),
-                    )
+                  ? const Center(child: Text('Nenhuma estação encontrada'))
                   : Row(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
@@ -155,10 +156,7 @@ class _LineDetailScreenState extends State<LineDetailScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: fluxoNavBar(
-        1,
-        (index) => goToTab(context, index),
-      ),
+      bottomNavigationBar: fluxoNavBar(1, (index) => goToTab(context, index)),
     );
   }
 }
@@ -216,26 +214,17 @@ class _StationCardState extends State<_StationCard> {
                     ),
                     Text(
                       widget.lineType,
-                      style: const TextStyle(
-                        color: muted,
-                        fontSize: 11,
-                      ),
+                      style: const TextStyle(color: muted, fontSize: 11),
                     ),
                   ],
                 ),
               ),
               const SizedBox(width: 8),
-              OccupancyLabel(
-                percent: station.occupancy,
-                size: 15,
-              ),
+              OccupancyLabel(percent: station.occupancy, size: 15),
             ],
           ),
           const SizedBox(height: 8),
-          OccupancyBar(
-            percent: station.occupancy,
-            height: 12,
-          ),
+          OccupancyBar(percent: station.occupancy, height: 12),
           const SizedBox(height: 8),
 
           // Informações extras aparecem quando o card é expandido.
@@ -294,10 +283,7 @@ class _StationCardState extends State<_StationCard> {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            text,
-            style: const TextStyle(color: muted, fontSize: 11),
-          ),
+          Text(text, style: const TextStyle(color: muted, fontSize: 11)),
           const SizedBox(width: 2),
           Icon(icon, size: 14, color: muted),
         ],

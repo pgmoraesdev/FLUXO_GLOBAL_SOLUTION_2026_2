@@ -1,3 +1,4 @@
+import 'home_screen.dart';
 import '../data/metro_data.dart';
 export '../data/metro_data.dart';
 
@@ -159,15 +160,13 @@ Widget fluxoNavBar(int index, ValueChanged<int> onTap) {
 }
 
 // Abre a tela correspondente à aba selecionada.
-// As telas Home e Ações PAULO ADICIONA DEPOIS
 void goToTab(BuildContext context, int index) {
   late final Widget page;
 
   switch (index) {
-    //case 0:
-    // page = const HomeScreen();, NAO SEI SE TA CERTO ISSO RS
-    // break;
-    //home aqui
+    case 0:
+      page = const HomeScreen();
+      break;
 
     case 1:
       page = const LinesScreen();

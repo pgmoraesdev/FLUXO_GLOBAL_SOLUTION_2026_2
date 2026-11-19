@@ -1,3 +1,4 @@
+import 'actions_screen.dart';
 import 'home_screen.dart';
 import '../data/metro_data.dart';
 export '../data/metro_data.dart';
@@ -172,7 +173,9 @@ void goToTab(BuildContext context, int index) {
       page = const LinesScreen();
       break;
 
-    // case 2: actions aq
+    case 2:
+      page = const ActionsScreen();
+      break;
 
     case 3:
       page = const EventsScreen();

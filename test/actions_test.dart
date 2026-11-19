@@ -4,6 +4,7 @@ import 'package:gs2026/data/reinforcement_data.dart';
 import 'package:gs2026/screens/notices_screen.dart';
 import 'package:gs2026/screens/actions_screen.dart';
 import 'package:gs2026/screens/home_screen.dart';
+import 'package:gs2026/screens/line_detail_screen.dart';
 import 'package:gs2026/screens/lines_screen.dart';
 import 'package:gs2026/screens/reinforcement_screen.dart';
 
@@ -61,6 +62,86 @@ void main() {
     await tester.pumpWidget(MaterialApp(home: page));
     await tester.pumpAndSettle();
   }
+
+  testWidgets(
+    'Atalho da linha abre reforço com linha selecionada e preserva busca ao voltar',
+    (tester) async {
+      final line = lineByNumber(3);
+      await open(tester, const LinesScreen());
+      await tester.enterText(find.byType(TextField), line.name);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Tomar ações →'));
+      await tester.pumpAndSettle();
+      final screen = tester.widget<ReinforcementScreen>(
+        find.byType(ReinforcementScreen),
+      );
+      expect(screen.initialLine, same(line));
+      expect(screen.requests, same(ReinforcementRequests.instance));
+      expect(
+        tester
+            .widget<DropdownButtonFormField<MetroLine>>(
+              find.byType(DropdownButtonFormField<MetroLine>),
+            )
+            .initialValue,
+        same(line),
+      );
+      expect(
+        tester
+            .widget<FilledButton>(
+              find.widgetWithText(FilledButton, 'Solicitar reforço'),
+            )
+            .onPressed,
+        isNotNull,
+      );
+      await tester.tap(find.byTooltip('Voltar'));
+      await tester.pumpAndSettle();
+      expect(find.byType(LinesScreen), findsOneWidget);
+      expect(
+        tester.widget<EditableText>(find.byType(EditableText)).controller.text,
+        line.name,
+      );
+      expect(find.text('Tomar ações →'), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'Atalho da estação abre reforço da linha e retorna aos detalhes',
+    (tester) async {
+      final line = lineByNumber(2);
+      final station = line.stations.first;
+      await open(
+        tester,
+        LineDetailScreen(line: line, initialQuery: station.name),
+      );
+      final shortcut = find.text('Tomar ações →');
+      await tester.ensureVisible(shortcut);
+      await tester.tap(shortcut);
+      await tester.pumpAndSettle();
+      expect(
+        tester
+            .widget<ReinforcementScreen>(find.byType(ReinforcementScreen))
+            .initialLine,
+        same(line),
+      );
+      expect(
+        tester
+            .widget<DropdownButtonFormField<MetroLine>>(
+              find.byType(DropdownButtonFormField<MetroLine>),
+            )
+            .initialValue,
+        same(line),
+      );
+      await tester.tap(find.byTooltip('Voltar'));
+      await tester.pumpAndSettle();
+      expect(find.byType(LineDetailScreen), findsOneWidget);
+      expect(
+        tester.widget<TextField>(find.byType(TextField)).controller!.text,
+        station.name,
+      );
+      expect(find.text(station.name), findsWidgets);
+      expect(tester.takeException(), isNull);
+    },
+  );
 
   testWidgets('Menu Ações abre hub antes do formulário de reforço', (
     tester,

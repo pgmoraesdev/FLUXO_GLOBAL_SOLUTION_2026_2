@@ -1,32 +1,24 @@
+import '../data/events_data.dart';
+export '../data/events_data.dart';
+
 import 'package:material_ui/material_ui.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
+
 import 'lines_screen.dart';
 
-class EventItem {
-  final String title;
-  final DateTime date;
-  final String time;
-  final List<int> lines;
-  final String warning;
-
-  EventItem(this.title, this.date, this.time, this.lines,
-      {this.warning = 'possível superlotação'});
-
-  String get when =>
-      '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')} às $time';
-}
-
-final List<EventItem> upcomingEvents = [
-  EventItem('Réveillon na Avenida Paulista', DateTime(2026, 12, 31), '20h00-02h00', [2, 4]),
-  EventItem('Show no Allianz Parque', DateTime(2027, 1, 16), '19h00-23h00', [3, 7, 8]),
-  EventItem('Desfile de Carnaval no Anhembi', DateTime(2027, 2, 6), '20h00-04h00', [1]),
-  EventItem('Manutenção programada na Linha 9', DateTime(2027, 2, 21), '22h00-05h00', [9], warning: 'intervalos maiores entre trens'),
-  EventItem('Jogo na Neo Química Arena', DateTime(2027, 3, 20), '16h00-19h00', [3, 11]),
-];
-
 const List<String> months = [
-  'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
-  'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro',
+  'Janeiro',
+  'Fevereiro',
+  'Março',
+  'Abril',
+  'Maio',
+  'Junho',
+  'Julho',
+  'Agosto',
+  'Setembro',
+  'Outubro',
+  'Novembro',
+  'Dezembro',
 ];
 
 class EventsScreen extends StatefulWidget {
@@ -40,7 +32,10 @@ class _EventsScreenState extends State<EventsScreen> {
   int? lineFilter;
 
   List<int> get lineNumbers {
-    final numbers = upcomingEvents.expand((event) => event.lines).toSet().toList();
+    final numbers = upcomingEvents
+        .expand((event) => event.lines)
+        .toSet()
+        .toList();
     numbers.sort();
     return numbers;
   }
@@ -75,8 +70,10 @@ class _EventsScreenState extends State<EventsScreen> {
               onChanged: (value) => setState(() => lineFilter = value),
             ),
             const SizedBox(height: 10),
-            Text('${items.length} de ${upcomingEvents.length} eventos',
-                style: const TextStyle(color: muted, fontSize: 12)),
+            Text(
+              '${items.length} de ${upcomingEvents.length} eventos',
+              style: const TextStyle(color: muted, fontSize: 12),
+            ),
             const SizedBox(height: 8),
             Expanded(
               child: items.isEmpty
@@ -100,9 +97,13 @@ class _EventsScreenState extends State<EventsScreen> {
       final month = event.date.year * 100 + event.date.month;
 
       if (month != lastMonth) {
-        final count = items.where((item) =>
-            item.date.year == event.date.year &&
-            item.date.month == event.date.month).length;
+        final count = items
+            .where(
+              (item) =>
+                  item.date.year == event.date.year &&
+                  item.date.month == event.date.month,
+            )
+            .length;
 
         widgets.add(_monthHeader(event.date, count, lastMonth == null));
         lastMonth = month;
@@ -123,14 +124,19 @@ class _EventsScreenState extends State<EventsScreen> {
           Text(
             '${months[date.month - 1]} ${date.year}'.toUpperCase(),
             style: const TextStyle(
-              color: black, fontSize: 13,
-              fontWeight: FontWeight.w700, letterSpacing: 1,
+              color: black,
+              fontSize: 13,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 1,
             ),
           ),
           const SizedBox(width: 10),
           const Expanded(child: Divider(height: 1, color: greyBorder)),
           const SizedBox(width: 10),
-          Text('$count ${count == 1 ? 'evento' : 'eventos'}', style: const TextStyle(color: muted, fontSize: 11)),
+          Text(
+            '$count ${count == 1 ? 'evento' : 'eventos'}',
+            style: const TextStyle(color: muted, fontSize: 11),
+          ),
         ],
       ),
     );
@@ -153,16 +159,26 @@ class _EventsScreenState extends State<EventsScreen> {
         children: [
           const Icon(LucideIcons.calendar, size: 40, color: greyBorder),
           const SizedBox(height: 10),
-          const Text('Nenhum evento para esta linha',
-              style: TextStyle(color: black, fontSize: 15, fontWeight: FontWeight.bold)),
+          const Text(
+            'Nenhum evento para esta linha',
+            style: TextStyle(
+              color: black,
+              fontSize: 15,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           const SizedBox(height: 4),
-          const Text('Tente outra linha ou veja todos os eventos.',
-              style: TextStyle(color: muted, fontSize: 12)),
+          const Text(
+            'Tente outra linha ou veja todos os eventos.',
+            style: TextStyle(color: muted, fontSize: 12),
+          ),
           const SizedBox(height: 12),
           TextButton(
             onPressed: () => setState(() => lineFilter = null),
-            child: const Text('Limpar filtro',
-                style: TextStyle(color: tealDark, fontWeight: FontWeight.w600)),
+            child: const Text(
+              'Limpar filtro',
+              style: TextStyle(color: tealDark, fontWeight: FontWeight.w600),
+            ),
           ),
         ],
       ),
@@ -206,15 +222,20 @@ class _ReminderControlState extends State<ReminderControl> {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(active ? LucideIcons.check : LucideIcons.bell,
-                      size: 14, color: active ? Colors.white : black),
+                  Icon(
+                    active ? LucideIcons.check : LucideIcons.bell,
+                    size: 14,
+                    color: active ? Colors.white : black,
+                  ),
                   const SizedBox(width: 5),
-                  Text(active ? 'Avisando' : 'Avisar-me',
-                      style: TextStyle(
-                        color: active ? Colors.white : black,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                      )),
+                  Text(
+                    active ? 'Avisando' : 'Avisar-me',
+                    style: TextStyle(
+                      color: active ? Colors.white : black,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ],
               ),
             ),

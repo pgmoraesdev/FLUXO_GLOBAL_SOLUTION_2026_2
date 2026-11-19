@@ -4,6 +4,7 @@ import 'package:lucide_flutter/lucide_flutter.dart';
 import '../data/reinforcement_data.dart';
 import 'lines_screen.dart';
 import 'reinforcement_screen.dart';
+import 'catalog_screen.dart';
 
 class ActionsScreen extends StatelessWidget {
   final ReinforcementRequests? requests;
@@ -37,6 +38,16 @@ class ActionsScreen extends StatelessWidget {
                 ),
               ),
               highlight: true,
+            ),
+            const SizedBox(height: 12),
+            _option(
+              icon: LucideIcons.pencil,
+              title: 'Cadastros (CRUD)',
+              description: 'Gerencie linhas, metrôs e vagões.',
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const CatalogScreen()),
+              ),
             ),
             const SizedBox(height: 12),
             _option(

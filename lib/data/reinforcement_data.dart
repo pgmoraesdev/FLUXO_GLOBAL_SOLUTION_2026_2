@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 import 'metro_data.dart';
+import 'notices_data.dart';
 
 class ReinforcementRequest {
   final int number;
@@ -23,6 +24,10 @@ class ReinforcementRequest {
 class ReinforcementRequests extends ChangeNotifier {
   static final instance = ReinforcementRequests();
   final List<ReinforcementRequest> _requests = [];
+  final NoticesStore notices;
+
+  ReinforcementRequests({NoticesStore? noticeStore})
+    : notices = noticeStore ?? NoticesStore.instance;
 
   List<ReinforcementRequest> get requests =>
       List.unmodifiable(_requests.reversed);
@@ -48,6 +53,18 @@ class ReinforcementRequests extends ChangeNotifier {
       createdAt: DateTime.now(),
     );
     _requests.add(request);
+    final date = request.createdAt;
+    notices.add(
+      NoticeItem(
+        '${request.code} · Reforço solicitado na ${line.name}',
+        '$trainCount ${trainCount == 1 ? 'composição adicional solicitada' : 'composições adicionais solicitadas'} '
+            'para a ${line.name}. Registro simulado; nenhum comando foi enviado à frota real.',
+        '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')} '
+            'às ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}',
+        [line.number],
+        warning: 'solicitação de reforço simulada',
+      ),
+    );
     notifyListeners();
     return request;
   }

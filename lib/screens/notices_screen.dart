@@ -186,36 +186,11 @@ class _NoticesScreenState extends State<NoticesScreen> {
     );
   }
 
-  Widget _emptyState() {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Icon(LucideIcons.check, size: 40, color: greyBorder),
-          const SizedBox(height: 10),
-          const Text(
-            'Tudo em dia',
-            style: TextStyle(
-              color: black,
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 4),
-          const Text(
-            'Você leu todos os comunicados.',
-            style: TextStyle(color: muted, fontSize: 12),
-          ),
-          const SizedBox(height: 12),
-          TextButton(
-            onPressed: () => setState(() => onlyUnread = false),
-            child: const Text(
-              'Ver todos',
-              style: TextStyle(color: tealDark, fontWeight: FontWeight.w600),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  Widget _emptyState() => FluxoEmptyState(
+    icon: LucideIcons.check,
+    title: 'Tudo em dia',
+    description: 'Você leu todos os comunicados.',
+    actionLabel: 'Ver todos',
+    onAction: () => setState(() => onlyUnread = false),
+  );
 }

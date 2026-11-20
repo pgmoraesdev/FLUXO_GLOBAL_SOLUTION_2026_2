@@ -298,6 +298,56 @@ class ScreenTitle extends StatelessWidget {
   }
 }
 
+// Estado vazio com uma ação para recuperar a listagem.
+class FluxoEmptyState extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String description;
+  final String actionLabel;
+  final VoidCallback onAction;
+
+  const FluxoEmptyState({
+    super.key,
+    required this.icon,
+    required this.title,
+    required this.description,
+    required this.actionLabel,
+    required this.onAction,
+  });
+
+  @override
+  Widget build(BuildContext context) => Center(
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 40, color: greyBorder),
+        const SizedBox(height: 10),
+        Text(
+          title,
+          style: const TextStyle(
+            color: black,
+            fontSize: 15,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(description, style: const TextStyle(color: muted, fontSize: 12)),
+        const SizedBox(height: 12),
+        TextButton(
+          onPressed: onAction,
+          child: Text(
+            actionLabel,
+            style: const TextStyle(
+              color: tealDark,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
 // CHIP DE FILTRO
 // É o botão usado para selecionar "Todas" ou uma linha específica.
 class FluxoChip extends StatelessWidget {

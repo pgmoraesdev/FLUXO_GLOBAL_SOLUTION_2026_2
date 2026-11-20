@@ -152,38 +152,13 @@ class _EventsScreenState extends State<EventsScreen> {
     );
   }
 
-  Widget _emptyState() {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Icon(LucideIcons.calendar, size: 40, color: greyBorder),
-          const SizedBox(height: 10),
-          const Text(
-            'Nenhum evento para esta linha',
-            style: TextStyle(
-              color: black,
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 4),
-          const Text(
-            'Tente outra linha ou veja todos os eventos.',
-            style: TextStyle(color: muted, fontSize: 12),
-          ),
-          const SizedBox(height: 12),
-          TextButton(
-            onPressed: () => setState(() => lineFilter = null),
-            child: const Text(
-              'Limpar filtro',
-              style: TextStyle(color: tealDark, fontWeight: FontWeight.w600),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  Widget _emptyState() => FluxoEmptyState(
+    icon: LucideIcons.calendar,
+    title: 'Nenhum evento para esta linha',
+    description: 'Tente outra linha ou veja todos os eventos.',
+    actionLabel: 'Limpar filtro',
+    onAction: () => setState(() => lineFilter = null),
+  );
 }
 
 // Este botão muda apenas de aparência. Não cria uma notificação real.

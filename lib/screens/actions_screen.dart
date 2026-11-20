@@ -42,7 +42,7 @@ class ActionsScreen extends StatelessWidget {
             const SizedBox(height: 12),
             _option(
               icon: LucideIcons.pencil,
-              title: 'Cadastros (CRUD)',
+              title: 'Cadastros',
               description: 'Gerencie linhas, metrôs e vagões.',
               onTap: () => Navigator.push(
                 context,

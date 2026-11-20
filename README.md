@@ -123,7 +123,7 @@ flutter run -d chrome
 ## Links da entrega
 
 - **Repositório:** [FLUXO no GitHub](https://github.com/pgmoraesdev/FLUXO_GLOBAL_SOLUTION_2026_2).
-- **Vídeo de demonstração:** `INSERIR_LINK_DO_VIDEO_NO_YOUTUBE`.
+- **Vídeo de demonstração:** [Assistir à demonstração no YouTube](https://youtu.be/vp9PhdTnIS8).
 
 ## Declaração de uso de IA generativa
 

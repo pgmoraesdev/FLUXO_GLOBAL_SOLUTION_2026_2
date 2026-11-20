@@ -35,6 +35,25 @@ Color occupancyColor(int percent) => isCritical(percent) ? danger : teal;
 Widget fluxoLogo({double height = 28}) =>
     Image.asset('assets/images/simbolo_trama.png', height: height);
 
+// Card padrão compartilhado pelas telas.
+class FluxoCard extends StatelessWidget {
+  final Widget child;
+  final Color color;
+
+  const FluxoCard({super.key, required this.child, this.color = Colors.white});
+
+  @override
+  Widget build(BuildContext context) => Container(
+    padding: const EdgeInsets.all(14),
+    decoration: BoxDecoration(
+      color: color,
+      border: Border.all(color: black, width: 1.5),
+      borderRadius: BorderRadius.circular(radius),
+    ),
+    child: child,
+  );
+}
+
 // Barra visual de porcentagem de ocupação
 class OccupancyBar extends StatelessWidget {
   final int percent;
@@ -474,13 +493,8 @@ class InfoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: highlight ? softTeal : Colors.white,
-        border: Border.all(color: black, width: 1.5),
-        borderRadius: BorderRadius.circular(radius),
-      ),
+    return FluxoCard(
+      color: highlight ? softTeal : Colors.white,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

@@ -82,13 +82,7 @@ class ActionsScreen extends StatelessWidget {
                 style: TextStyle(color: muted, fontSize: 12),
               ),
             for (final request in store.requests) ...[
-              Container(
-                padding: const EdgeInsets.all(14),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(color: black, width: 1.5),
-                  borderRadius: BorderRadius.circular(radius),
-                ),
+              FluxoCard(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

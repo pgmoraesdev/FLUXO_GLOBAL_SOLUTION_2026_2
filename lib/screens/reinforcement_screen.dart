@@ -86,13 +86,8 @@ class _ReinforcementScreenState extends State<ReinforcementScreen> {
                   'Selecione uma linha para solicitar composições adicionais.',
             ),
             const SizedBox(height: 14),
-            Container(
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                color: softTeal,
-                borderRadius: BorderRadius.circular(radius),
-                border: Border.all(color: black, width: 1.5),
-              ),
+            FluxoCard(
+              color: softTeal,
               child: const Text(
                 'Simulação: nenhum comando será enviado à frota. As solicitações ficam disponíveis apenas durante esta execução do app.',
                 style: TextStyle(color: muted, fontSize: 12, height: 1.4),
@@ -117,12 +112,8 @@ class _ReinforcementScreenState extends State<ReinforcementScreen> {
             ),
             const SizedBox(height: 14),
             if (line != null) ...[
-              Container(
-                padding: const EdgeInsets.all(14),
-                decoration: BoxDecoration(
-                  border: Border.all(color: black, width: 1.5),
-                  borderRadius: BorderRadius.circular(radius),
-                ),
+              FluxoCard(
+                color: Colors.transparent,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

@@ -179,13 +179,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
                 ),
               ),
             for (final record in records) ...[
-              Container(
-                padding: const EdgeInsets.all(14),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(color: black, width: 1.5),
-                  borderRadius: BorderRadius.circular(radius),
-                ),
+              FluxoCard(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

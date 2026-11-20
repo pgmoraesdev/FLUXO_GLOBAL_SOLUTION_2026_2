@@ -55,13 +55,7 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
                 ],
               ),
               const SizedBox(height: 18),
-              Container(
-                padding: const EdgeInsets.all(14),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(color: black, width: 1.5),
-                  borderRadius: BorderRadius.circular(radius),
-                ),
+              FluxoCard(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -319,13 +313,8 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
   );
 
   Widget _panel({required List<Widget> children, Color color = Colors.white}) =>
-      Container(
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: color,
-          border: Border.all(color: black, width: 1.5),
-          borderRadius: BorderRadius.circular(radius),
-        ),
+      FluxoCard(
+        color: color,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: children,

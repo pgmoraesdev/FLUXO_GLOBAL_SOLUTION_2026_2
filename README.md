@@ -85,6 +85,16 @@ Cadastros, solicitações e novos comunicados são mantidos apenas durante a exe
 - Flutter instalado com Dart compatível com o `pubspec.yaml`: **Dart >= 3.13.7 e < 4.0.0**.
 - Para Android: Android SDK configurado e um emulador iniciado ou dispositivo físico conectado com depuração USB.
 
+### Ambiente Android utilizado
+
+O aplicativo foi compilado e aberto no emulador Pixel 7 com a seguinte configuração:
+
+- **Flutter 3.50.0**, com **Dart 3.14.0**.
+- **Android Gradle Plugin 9.1.1**, definido em `android/settings.gradle.kts`.
+- **Gradle 9.3.1**, definido em `android/gradle/wrapper/gradle-wrapper.properties`.
+
+Use o mesmo SDK Flutter no Android Studio e no terminal. Se houver mais de uma instalação no computador, confira a versão do terminal com `flutter --version` e o caminho do SDK configurado no Android Studio. O arquivo local `android/local.properties` deve apontar para essa mesma instalação; os caminhos dependem do computador e não devem ser copiados de outro ambiente.
+
 Confira o ambiente:
 
 ```bash

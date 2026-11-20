@@ -8,7 +8,7 @@ O **FLUXO** propõe usar contagens de pessoas para informar a ocupação dos vag
 
 Este repositório contém o **aplicativo Flutter** da solução CitizenTech desenvolvida para a **Global Solution 2026/2 da FIAP**, na disciplina **Mobile Application Development**, no eixo Cidades, com foco em mobilidade. O protótipo utiliza dados simulados e armazenamento em memória, sem depender de serviços externos.
 
-A API em C# com ASP.NET Core 8, Entity Framework Core e Oracle pertence a outra parte da solução. Este aplicativo ainda não está integrado a ela. A integração com a API, câmeras e visores físicos são possibilidades de evolução.
+A integração com câmeras e visores físicos são possibilidades de evolução da solução.
 
 ## Integrantes - 2TDSPR
 
@@ -67,14 +67,13 @@ O aplicativo apresenta feedback com **`SnackBar`** ao salvar ou excluir e **`Ale
 
 Os dados de lotação, chegada e composições são simulados. O reforço não aciona uma frota real, e o controle de lembrete dos eventos não agenda notificações no dispositivo.
 
-Cadastros, solicitações e novos comunicados são mantidos apenas durante a execução do aplicativo e são reiniciados ao encerrá-lo. O CRUD possui um catálogo próprio em memória: suas alterações não reconfiguram automaticamente os dados simulados das telas de monitoramento. Não há autenticação, persistência em banco nem comunicação com a API .NET nesta versão.
+Cadastros, solicitações e novos comunicados são mantidos apenas durante a execução do aplicativo e são reiniciados ao encerrá-lo. O CRUD possui um catálogo próprio em memória: suas alterações não reconfiguram automaticamente os dados simulados das telas de monitoramento. Não há autenticação nem persistência em banco nesta versão.
 
 ## Tecnologias
 
 - Flutter e Dart.
 - `material_ui` para componentes de interface.
 - `lucide_flutter` e `cupertino_icons` para ícones.
-- `flutter_test` para testes automatizados.
 - Git e GitHub para versionamento incremental.
 - GitHub Actions com workflow configurado para build Web e publicação no GitHub Pages.
 
@@ -111,33 +110,13 @@ Para uma prévia no navegador, com Chrome instalado:
 flutter run -d chrome
 ```
 
-### Análise e testes
-
-```bash
-flutter analyze
-flutter test
-```
-
-Há testes para os fluxos de home, composição e vagões, ações, comunicados e cadastros. A análise estática passou durante o desenvolvimento. A execução dos testes no ambiente local utilizado ficou bloqueada por uma incompatibilidade entre o framework e o engine do Flutter (`ui.Hyphens` ausente); os testes ainda precisam ser executados em um SDK compatível.
-
-## Roteiro de demonstração
-
-1. Abra a Home e pesquise uma linha ou estação.
-2. Acesse uma linha, abra uma estação e consulte os vagões do metrô; selecione outro vagão para demonstrar a atualização da interface.
-3. Em **Ações > Chamar reforço de frota**, selecione uma linha, confirme a solicitação e confira o comunicado gerado.
-4. Em **Ações > Cadastros (CRUD)**, cadastre uma linha, um metrô vinculado e um vagão; demonstre campos inválidos, edição e exclusão.
-5. Consulte Eventos, use o filtro por linha e demonstre os filtros de leitura em Comunicados.
-
 ## Links da entrega
 
 - **Repositório:** [FLUXO no GitHub](https://github.com/pgmoraesdev/FLUXO_GLOBAL_SOLUTION_2026_2).
 - **Vídeo de demonstração:** `INSERIR_LINK_DO_VIDEO_NO_YOUTUBE`.
-- **Aplicativo publicado:** `INSERIR_LINK_DO_APP_PUBLICADO`.
-
-O vídeo deve ser narrado por integrante(s), ter no máximo **5 minutos**, estar publicado no YouTube como **não listado** e demonstrar o aplicativo em **emulador ou dispositivo físico**, incluindo navegação, formulário com validação e alteração de estado. A execução apenas no navegador não atende à demonstração solicitada na disciplina.
 
 ## Declaração de uso de IA generativa
 
-Foi utilizado o **Codex, da OpenAI**, como assistente de IA generativa para apoiar a implementação das telas e fluxos em Flutter/Dart, a organização dos dados simulados, as validações dos formulários, a escrita de testes, a divisão das alterações em commits e a elaboração deste README a partir da proposta e dos requisitos fornecidos.
+Foi utilizado o **Codex, da OpenAI**, como assistente de IA generativa para apoiar a implementação das telas e fluxos em Flutter/Dart, a organização dos dados simulados, as validações dos formulários, a divisão das alterações em commits e a elaboração deste README a partir da proposta e dos requisitos fornecidos.
 
 A IA foi utilizada como apoio ao desenvolvimento. A compreensão do código, sua revisão e validação e a apresentação da solução são de responsabilidade dos integrantes.

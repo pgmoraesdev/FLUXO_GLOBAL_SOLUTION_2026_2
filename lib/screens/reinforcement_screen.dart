@@ -97,7 +97,7 @@ class _ReinforcementScreenState extends State<ReinforcementScreen> {
             DropdownButtonFormField<MetroLine>(
               initialValue: selected,
               isExpanded: true,
-              decoration: _decoration('Linha selecionada'),
+              decoration: fluxoFieldDecoration('Linha selecionada'),
               hint: const Text('Selecione uma linha'),
               items: [
                 for (final item in metroLines)
@@ -132,7 +132,7 @@ class _ReinforcementScreenState extends State<ReinforcementScreen> {
             ],
             DropdownButtonFormField<int>(
               initialValue: trainCount,
-              decoration: _decoration('Quantidade de composições'),
+              decoration: fluxoFieldDecoration('Quantidade de composições'),
               items: [
                 for (final count in [1, 2, 3])
                   DropdownMenuItem(
@@ -181,22 +181,5 @@ class _ReinforcementScreenState extends State<ReinforcementScreen> {
       },
     ),
     bottomNavigationBar: fluxoNavBar(2, (index) => goToTab(context, index)),
-  );
-
-  InputDecoration _decoration(String label) => InputDecoration(
-    labelText: label,
-    labelStyle: const TextStyle(color: muted, fontSize: 12),
-    border: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(radius),
-      borderSide: const BorderSide(color: greyBorder, width: 1.5),
-    ),
-    enabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(radius),
-      borderSide: const BorderSide(color: greyBorder, width: 1.5),
-    ),
-    focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(radius),
-      borderSide: const BorderSide(color: tealDark, width: 2),
-    ),
   );
 }

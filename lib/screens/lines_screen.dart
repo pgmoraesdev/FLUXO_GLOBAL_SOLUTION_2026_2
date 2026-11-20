@@ -258,6 +258,15 @@ InputDecoration searchDecoration(String hint) => InputDecoration(
   focusedBorder: _border(greyBorder, 2),
 );
 
+// Decoração compartilhada pelos campos de cadastro e reforço.
+InputDecoration fluxoFieldDecoration(String label) => InputDecoration(
+  labelText: label,
+  labelStyle: const TextStyle(color: muted, fontSize: 12),
+  border: _border(greyBorder, 1.5),
+  enabledBorder: _border(greyBorder, 1.5),
+  focusedBorder: _border(tealDark, 2),
+);
+
 // TÍTULO PADRÃO DE SEÇÃO
 class ScreenTitle extends StatelessWidget {
   final String title;

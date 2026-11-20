@@ -279,7 +279,7 @@ class _CatalogFormScreenState extends State<CatalogFormScreen> {
     padding: const EdgeInsets.only(bottom: 14),
     child: TextFormField(
       controller: fields[key],
-      decoration: _decoration(label),
+      decoration: fluxoFieldDecoration(label),
       keyboardType: numeric ? TextInputType.number : TextInputType.text,
       textCapitalization: numeric
           ? TextCapitalization.none
@@ -311,27 +311,10 @@ class _CatalogFormScreenState extends State<CatalogFormScreen> {
     child: DropdownButtonFormField<T>(
       initialValue: selected,
       isExpanded: true,
-      decoration: _decoration(label),
+      decoration: fluxoFieldDecoration(label),
       items: items,
       onChanged: onChanged,
       validator: (value) => value == null ? 'Selecione uma opção.' : null,
-    ),
-  );
-
-  InputDecoration _decoration(String label) => InputDecoration(
-    labelText: label,
-    labelStyle: const TextStyle(color: muted, fontSize: 12),
-    border: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(radius),
-      borderSide: const BorderSide(color: greyBorder, width: 1.5),
-    ),
-    enabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(radius),
-      borderSide: const BorderSide(color: greyBorder, width: 1.5),
-    ),
-    focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(radius),
-      borderSide: const BorderSide(color: tealDark, width: 2),
     ),
   );
 
